@@ -1,0 +1,27 @@
+package com.liaocc.test.dao;
+
+import com.liaocc.test.po.Tag;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+public interface TagRepository extends JpaRepository<Tag,Long> {
+    @Query(value = "select name from tag where id in (select tag_id from cnt_blog_tag where blog_id=?1)",nativeQuery = true)
+    List<String> getTags(Long blogid);
+
+    @Query(value = "select id from tag where name=?1",nativeQuery = true)
+    Long getTagId(String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into tag(name) values (?1)",nativeQuery = true)
+    void insertTag(String name);
+
+    @Modifying
+    @Transactional
+    @Query(value = "insert into cnt_blog_tag(blog_id,tag_id) values (?1,?2) on DUPLICATE key update tag_id=VALUES(tag_id)",nativeQuery = true)
+    void insertTagToBlog(Long blogid,Long tagid);
+}
