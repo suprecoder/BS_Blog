@@ -23,7 +23,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @Configuration
 @EnableCaching
 @RefreshScope
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 86400)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 7200)
 public class RedisConfig extends CachingConfigurerSupport{
     @Value("${spring.redis.host}")
     private String host;

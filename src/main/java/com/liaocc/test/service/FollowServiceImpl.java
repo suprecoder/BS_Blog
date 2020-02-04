@@ -35,4 +35,9 @@ public class FollowServiceImpl implements FollowService {
         return followRepository.count(userid);
     }
 
+    @Override
+    public int countmygetfollow(Long userid) {
+        return followRepository.countgetfollow(userid);
+    }
+
 }

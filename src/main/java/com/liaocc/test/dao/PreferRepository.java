@@ -27,6 +27,11 @@ public interface PreferRepository extends JpaRepository<Prefer, UseridAndBlogidK
     @Query(value = "select count(*) from prefer where blog_id=?1 and user_id=?2",nativeQuery = true)
     int get(Long blog_id,Long user_id);
 
+    //我喜欢的博客数量
     @Query(value = "select count(*) from prefer where user_id=?1",nativeQuery = true)
     int count(Long user_id);
+
+    //我收获的喜欢
+    @Query(value = "select count(*) from prefer where blog_id in (select id from blog where user_id=?1)",nativeQuery = true)
+    int countgetprefer(Long user_id);
 }

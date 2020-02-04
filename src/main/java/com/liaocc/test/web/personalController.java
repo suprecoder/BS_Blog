@@ -2,11 +2,13 @@ package com.liaocc.test.web;
 
 import com.liaocc.test.dao.AvatarRepository;
 import com.liaocc.test.dao.BlogRepository;
+import com.liaocc.test.dao.PresonMsgRepository;
 import com.liaocc.test.po.Avatar;
 import com.liaocc.test.po.User;
-import com.liaocc.test.service.AvatarService;
-import com.liaocc.test.service.UserService;
+import com.liaocc.test.service.*;
+import com.liaocc.test.table.PersonalMsg;
 import com.sun.xml.internal.ws.api.pipe.ContentType;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.FileCopyUtils;
@@ -25,6 +27,14 @@ import java.io.*;
 public class personalController {
     @Autowired
     UserService userService;
+    @Autowired
+    FollowService followService;
+    @Autowired
+    FavouriteService favouriteService;
+    @Autowired
+    PreferService preferService;
+    @Autowired
+    PresonMsgRepository presonMsgRepository;
     Long userid;
     Long getuserid(HttpSession session){
         String username= (String) session.getAttribute("username");
@@ -40,7 +50,6 @@ public class personalController {
     @RequestMapping("upload")
     void upload(@RequestParam(value = "file")MultipartFile file,HttpSession session){
         userid=getuserid(session);
-        System.out.println("userid: "+userid);
         avatarService.saveAvatar(userid,file);
     }
     @RequestMapping("getmyavatar")
@@ -58,4 +67,37 @@ public class personalController {
             FileCopyUtils.copy(avatarService.getAvatarbyBlog(blogid), response.getOutputStream());
         }catch (Exception e){e.printStackTrace();}
     }
+    //根据作者名字查询作者头像
+    @RequestMapping("getavatarbyname/{name}")
+    void getimgbyname(@PathVariable("name") String name,HttpServletResponse response){
+        try{
+
+            FileCopyUtils.copy(avatarService.getAvatar(userService.getUserbyname(name).getId()), response.getOutputStream());
+        }catch (Exception e){e.printStackTrace();}
+    }
+    @RequestMapping("getusermsg")
+    PersonalMsg getusermsg(@RequestParam(value = "username",required = true)String username){
+        Long userid=userService.getUserbyname(username).getId();
+        PersonalMsg temp= presonMsgRepository.get(userid);
+        return temp;
+    }
+    @PostMapping("save")
+    String save(@RequestBody PersonalMsg p,HttpSession session){
+        getuserid(session);
+        int a=presonMsgRepository.save(p.getSex(),p.getMail(),p.getPhonenum(),p.getAddress(),p.getJob(),p.getMydescribe(),userid);
+        if(a>0)
+            return "ok";
+        return "no";
+    }
+
+    @GetMapping("getmyget")
+    String getmyget(@RequestParam(value = "username",required = true) String username){
+        Long userid=userService.getUserbyname(username).getId();
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("prefernum",preferService.countmygetprefer(userid));
+        jsonObject.put("follownum",followService.countmygetfollow(userid));
+        jsonObject.put("favouritenum",favouriteService.countmygetfavourite(userid));
+        return jsonObject.toString();
+    }
+
 }

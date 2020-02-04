@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @CrossOrigin
@@ -65,8 +66,7 @@ public class indexController {
 
         String username=jsonObject.getString("username");
         String psw=jsonObject.getString("psw");
-        redisUtils.add("username",username);
-        //redisUtils.get("username");
+
         boolean isok=userService.login(username,psw);
         if(isok){
             String usersession= (String) session.getAttribute("user");

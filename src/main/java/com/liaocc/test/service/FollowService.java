@@ -10,4 +10,5 @@ public interface FollowService {
     public boolean follow(Long blog_id,Long user_id);
     public boolean unfollow(Long blog_id,Long user_id);
     public int count(Long userid);
+    public int countmygetfollow(Long userid);
 }

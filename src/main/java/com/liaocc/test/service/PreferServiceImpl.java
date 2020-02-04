@@ -38,4 +38,9 @@ public class PreferServiceImpl implements PreferService {
         if(a==0)return false;
         return true;
     }
+
+    @Override
+    public int countmygetprefer(Long userid) {
+        return preferRepository.countgetprefer(userid);
+    }
 }

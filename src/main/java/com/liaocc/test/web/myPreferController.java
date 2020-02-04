@@ -58,6 +58,7 @@ public class myPreferController {
                 if(b.getId().longValue()==i.longValue())
                     temp.setFavourite(true);
             }
+            temp.setWriter(blogService.getblog(b.getId()).getUser().getUsername());
             ans.add(temp);
         }
         return ans;

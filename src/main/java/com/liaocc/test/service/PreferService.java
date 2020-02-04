@@ -9,4 +9,5 @@ public interface PreferService {
     public List<BigInteger> getPrefer(Long userid);
     public boolean unLike(Long blog_id,Long user_id);
     public boolean like(Long blog_id,Long user_id);
+    public int countmygetprefer(Long userid);
 }

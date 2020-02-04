@@ -37,4 +37,9 @@ public class FavouriteServiceImpl implements FavouriteService {
         if(a==0)return false;
         return true;
     }
+
+    @Override
+    public int countmygetfavourite(Long userid){
+        return favouriteRepository.countgetfavourite(userid);
+    }
 }

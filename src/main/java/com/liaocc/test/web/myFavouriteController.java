@@ -57,6 +57,7 @@ public class myFavouriteController {
                 if(b.getId().longValue()==i.longValue())
                     temp.setLike(true);
             }
+            temp.setWriter(blogService.getblog(b.getId()).getUser().getUsername());
             ans.add(temp);
         }
         return ans;
@@ -73,4 +74,5 @@ public class myFavouriteController {
         favouriteRepository.delete(blogid,userid);
         return "ok";
     }
+
 }

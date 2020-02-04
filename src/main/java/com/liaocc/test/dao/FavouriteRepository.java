@@ -27,6 +27,11 @@ public interface FavouriteRepository extends JpaRepository<Favourite, UseridAndB
     @Query(value = "select count(*) from favourite where blog_id=?1 and user_id=?2",nativeQuery = true)
     int get(Long blog_id,Long user_id);
 
+    //我收藏的博客数量
     @Query(value = "select count(*) from favourite where user_id=?1",nativeQuery = true)
     int count(Long user_id);
+
+    //我收获的收藏
+    @Query(value = "select count(*) from favourite where blog_id in (select id from blog where user_id=?1)",nativeQuery = true)
+    int countgetfavourite(Long user_id);
 }
