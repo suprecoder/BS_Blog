@@ -15,8 +15,16 @@ public class PersonalMsg {
     String phonenum;
     String address;
 
+    @Transient
+    boolean isfollow;
 
+    public boolean isIsfollow() {
+        return isfollow;
+    }
 
+    public void setIsfollow(boolean isfollow) {
+        this.isfollow = isfollow;
+    }
 
     public PersonalMsg(Long id, String job, String sex, String mydescribe, String mail, String phonenum, String address) {
         this.id = id;

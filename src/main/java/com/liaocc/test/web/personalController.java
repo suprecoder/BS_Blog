@@ -76,9 +76,10 @@ public class personalController {
         }catch (Exception e){e.printStackTrace();}
     }
     @RequestMapping("getusermsg")
-    PersonalMsg getusermsg(@RequestParam(value = "username",required = true)String username){
+    PersonalMsg getusermsg(@RequestParam(value = "username",required = true)String username,HttpSession session){
         Long userid=userService.getUserbyname(username).getId();
         PersonalMsg temp= presonMsgRepository.get(userid);
+        temp.setIsfollow(followService.isfollow(getuserid(session),userid));
         return temp;
     }
     @PostMapping("save")
@@ -100,4 +101,15 @@ public class personalController {
         return jsonObject.toString();
     }
 
+    //如果已经关注则取消关注，未关注则添加关注
+    @GetMapping("follow")
+    String follow(@RequestParam(value = "username",required = true) String username,HttpSession session){
+        boolean flag;
+        if(followService.isfollow(getuserid(session),userService.getUserbyname(username).getId()))
+            flag=followService.unfollow(getuserid(session),userService.getUserbyname(username).getId());
+        else
+            flag=followService.follow(getuserid(session),userService.getUserbyname(username).getId());
+        if(flag)return "ok";
+        return "no";
+    }
 }

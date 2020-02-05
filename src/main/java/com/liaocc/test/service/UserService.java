@@ -7,4 +7,5 @@ public interface UserService {
     boolean login(String name,String psw);
     public boolean register(String username,String psw);
     public boolean verify(String username);
+    public User getUserByid(Long id);
 }

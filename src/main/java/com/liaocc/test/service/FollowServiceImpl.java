@@ -21,13 +21,13 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public boolean follow(Long blog_id, Long user_id) {
-        return false;
+    public boolean follow(Long user_id,Long follow_id) {
+        return followRepository.insert(user_id,follow_id)>0?true:false;
     }
 
     @Override
-    public boolean unfollow(Long blog_id, Long user_id) {
-        return false;
+    public boolean unfollow(Long user_id,Long follow_id) {
+        return followRepository.delete(user_id,follow_id)>0?true:false;
     }
 
     @Override
@@ -38,6 +38,11 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public int countmygetfollow(Long userid) {
         return followRepository.countgetfollow(userid);
+    }
+
+    @Override
+    public boolean isfollow(Long user_id, Long follow_id) {
+        return followRepository.isexist(user_id,follow_id)>0;
     }
 
 }
