@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
 public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Query(value = "select * from blog",nativeQuery = true)
@@ -20,6 +21,9 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
 
     @Query(value = "(select * from blog where user_id=(select id from user where username=?1) order by blog.id) limit ?2,8",nativeQuery = true)
     List<Blog> listblogbyusername(String username,int item);
+
+    @Query(value = "(select * from blog where user_id=(select id from user where username=?1) order by blog.id)",nativeQuery = true)
+    List<Blog> listblogbyusername(String username);
 
     //?1请求第几页,?2每页有多少条目
     @Query(value = "select *from blog order by id limit ?1,?2 ",nativeQuery = true)
@@ -49,6 +53,5 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Transactional
     @Query(value = "delete from blog where id=?1 and user_id=?2",nativeQuery = true)
     int delete(Long blogid,Long userid);
-
 
 }

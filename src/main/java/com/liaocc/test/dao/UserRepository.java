@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface UserRepository extends JpaRepository<User,Long> {
     @Query(value = "select * from user where username=?1 and psw=?2",nativeQuery = true)
     User getbyUsernameAndPsw(String name,String psw);
@@ -23,4 +25,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query(value = "select *from user where id=?1",nativeQuery = true)
     User getUserByid(Long id);
+
+    @Query(value = "select *from user",nativeQuery = true)
+    List<User> getAllUsers();
 }

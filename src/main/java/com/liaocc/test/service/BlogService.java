@@ -12,8 +12,8 @@ public interface BlogService {
     Blog getblog(Long blogid);
     List<Blog> listblogbyname(String username,int page);
     List<Blog> listbloginpage(int page);
-    //总共有多少博客
-    Long countAll();
+    //总共有多少推荐博客
+    public Long countAllRecommand(Long userid);
     //我有多少博客
     Long countAll(Long id);
     Blog getBlogByUserAndTitle(User user,String title);
@@ -21,4 +21,6 @@ public interface BlogService {
     String getSummary(Long blogid);
     public String toSummary(Blog b);
     boolean delete(Long blogid,Long userid);
+    public List<Blog> getRecommandBlogInpage(Long userid,int page);
+    List<Blog> getRecommandBlog(Long userid);
 }

@@ -1,6 +1,9 @@
 package com.liaocc.test.po;
 
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -24,6 +27,25 @@ public class Blog {
     private Boolean islike;
     @Transient
     private List<String> tags;
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((Blog)obj).getId().equals(this.id);
+    }
+
+    @Override
+    public int hashCode(){
+        return id.hashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return "Blog{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                '}';
+    }
 
     public Integer getPublictype() {
         return publictype;

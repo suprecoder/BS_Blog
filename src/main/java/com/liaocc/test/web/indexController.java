@@ -1,5 +1,6 @@
 package com.liaocc.test.web;
 
+import com.liaocc.test.dao.BlogRepository;
 import com.liaocc.test.po.Blog;
 import com.liaocc.test.po.Favourite;
 import com.liaocc.test.po.Prefer;
@@ -31,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 
@@ -90,11 +92,44 @@ public class indexController {
     @GetMapping("getblogs")
     @ResponseBody
     List<BlogTitleAndSummary> getblogs(@RequestParam(value = "val",required = false) Integer val,HttpSession session){
+        /*List<String> alltag=tagService.getAllTagsName();
+        long idt=94l;
+        for(int i=0;i<300;i++){
+            Blog blog=new Blog();
+            blog.setTitle("这是用来测试推荐系统的");
+            blog.setContent_md("这个测试系统是利用用户的浏览习惯和博客的发布情况，根据博客的标签信息推荐博客。利用余弦相似度计算用户之间的" +
+                    "相似度，推荐相似用户喜欢的博客");
+            blog.setContent_html("<p>这个测试系统是利用用户的浏览习惯和博客的发布情况，根据博客的标签信息推荐博客。利用余弦相似度计算用户之间的" +
+                    "相似度，推荐相似用户喜欢的博客</p>");
+            blog.setPublictype(1);
+            Random r=new Random();
+            int rn=Math.abs(r.nextInt())%7+1;
+            if(rn==4)
+                rn=5;
+            User u=new User();
+            u.setId((long)rn);
+            blog.setUser(u);
+            blog.setId((long)(blogService.countAll()+1));
+            blog.setPrefer(0l);blog.setReadnum(0l);blog.setIsdraft(false);
+            blogService.saveblog(blog);
+            List<String> tags=new ArrayList<>();
+            int nn=Math.abs(r.nextInt())%3+1;
+            for(int j=0;j<nn;j++){
+                String name=alltag.get(Math.abs(r.nextInt())%alltag.size());
+                tags.add(name);
+            }
+            tagService.addtags(idt++,tags);
+        }
+        */
         User user=userService.getUserbyname((String) session.getAttribute("username"));
         if(user!=null)
             userid=user.getId();
         else return null;
         List<Blog> blogs=blogService.listbloginpage(val);
+
+        ///////
+        blogs=blogService.getRecommandBlogInpage(user.getId(),val);
+
         List<BlogTitleAndSummary> ans=new ArrayList<>();
         List<BigInteger> prefer=preferService.getPrefer(userid);
         List<BigInteger> favourite=favouriteService.getFavourite(userid);
@@ -164,9 +199,15 @@ public class indexController {
             return "ok";
         return "no";
     }
-
+    Long getuserid(HttpSession session){
+        String username= (String) session.getAttribute("username");
+        User user=userService.getUserbyname(username);
+        if(user==null)return null;
+        userid=user.getId();
+        return user.getId();
+    }
     @GetMapping("countAll")
-    public Long countAll(){
-        return blogService.countAll();
+    public Long countAll(HttpSession session){
+        return blogService.countAllRecommand(getuserid(session));
     }
 }

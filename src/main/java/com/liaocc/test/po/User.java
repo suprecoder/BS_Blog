@@ -1,6 +1,9 @@
 package com.liaocc.test.po;
 
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 public class User {

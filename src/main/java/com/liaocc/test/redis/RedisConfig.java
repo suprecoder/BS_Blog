@@ -1,6 +1,8 @@
 package com.liaocc.test.redis;
 
 import java.lang.reflect.Method;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -9,6 +11,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -19,11 +22,12 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 
 @Configuration
 @EnableCaching
 @RefreshScope
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 7200)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 10800)
 public class RedisConfig extends CachingConfigurerSupport{
     @Value("${spring.redis.host}")
     private String host;
@@ -43,7 +47,8 @@ public class RedisConfig extends CachingConfigurerSupport{
     private int minIdle;
 
     @RefreshScope
-    @Bean
+    @Bean("keyGenerator1")
+    @Primary
     public KeyGenerator wiselyKeyGenerator(){
         return new KeyGenerator() {
             @Override
@@ -59,8 +64,11 @@ public class RedisConfig extends CachingConfigurerSupport{
         };
     }
 
+    /////////////session////////////////
+
     @RefreshScope
-    @Bean
+    @Bean("factory1")
+    @Primary
     public JedisConnectionFactory redisConnectionFactory() {
         JedisConnectionFactory factory = new JedisConnectionFactory();
         factory.setHostName(host);
@@ -84,8 +92,9 @@ public class RedisConfig extends CachingConfigurerSupport{
     }
 
     @RefreshScope
-    @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
+    @Bean("redisTemplate1")
+    @Primary
+    public RedisTemplate<String, String> redisTemplate(@Qualifier("factory1") RedisConnectionFactory factory) {
         StringRedisTemplate template = new StringRedisTemplate(factory);
         setSerializer(template); //设置序列化工具，这样ReportBean不需要实现Serializable接口
         template.afterPropertiesSet();
@@ -100,5 +109,33 @@ public class RedisConfig extends CachingConfigurerSupport{
         om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         jackson2JsonRedisSerializer.setObjectMapper(om);
         template.setValueSerializer(jackson2JsonRedisSerializer);
+        template.setHashKeySerializer(jackson2JsonRedisSerializer);
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+    }
+
+    //////////////数据缓冲区////////////////
+
+    @RefreshScope
+    @Bean("factory2")
+    public JedisConnectionFactory redisConnectionFactory2() {
+        JedisConnectionFactory factory = new JedisConnectionFactory();
+        factory.setHostName(host);
+        factory.setPort(6380);
+        factory.setTimeout(timeout); //设置连接超时时间
+        factory.setPassword(password);
+        factory.getPoolConfig().setMaxIdle(maxIdle);
+        factory.getPoolConfig().setMinIdle(minIdle);
+        factory.getPoolConfig().setMaxTotal(maxActive);
+        factory.getPoolConfig().setMaxWaitMillis(maxWait);
+        return factory;
+    }
+
+    @RefreshScope
+    @Bean("redisTemplate2")
+    public RedisTemplate<String, String> redisTemplate2(@Qualifier("factory2") RedisConnectionFactory factory) {
+        StringRedisTemplate template = new StringRedisTemplate(factory);
+        setSerializer(template); //设置序列化工具，这样ReportBean不需要实现Serializable接口
+        template.afterPropertiesSet();
+        return template;
     }
 }

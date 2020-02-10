@@ -68,10 +68,13 @@ public class myFavouriteController {
         return favouriteRepository.count(userid);
     }
 
+    @Autowired
+    FavouriteService favouriteService;
+
     @GetMapping("delete")
     String delete(@RequestParam(value = "blogid",required = true) Long blogid,HttpSession session){
         userid=getuserid(session);
-        favouriteRepository.delete(blogid,userid);
+        favouriteService.unfavourite(blogid,userid);
         return "ok";
     }
 

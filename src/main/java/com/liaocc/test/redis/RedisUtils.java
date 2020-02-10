@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,9 +13,12 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
 @Service
 public class RedisUtils {
-    @Autowired
+    @Resource(name = "redisTemplate2")
     private RedisTemplate redisTemplate;
 
     /**
@@ -54,6 +58,10 @@ public class RedisUtils {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void setexpire(final String key,Long expireTime,TimeUnit timeUnit){
+        redisTemplate.expire(key, expireTime, timeUnit);
     }
 
     /**
@@ -122,6 +130,7 @@ public class RedisUtils {
      */
     public void hmSet(String key, Object hashKey, Object value) {
         HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+
         hash.put(key, hashKey, value);
     }
 

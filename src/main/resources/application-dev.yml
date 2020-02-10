@@ -18,6 +18,19 @@ spring:
       max-idle: 8
       min-idle: 0
     timeout: 30000
+    database: 5
+
+  redis2:
+
+    host: 127.0.0.1
+    port: 6379
+    password:
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+    timeout: 30000
 logging:
   level:
     root: info

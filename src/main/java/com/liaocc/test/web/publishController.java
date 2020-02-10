@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,6 +41,10 @@ public class publishController {
         return "no";
     }
 
-
-
+    @GetMapping("publish/getrecommand")
+    List<String> getRecommand(@RequestParam(value = "tagname",required = false)String tagname){
+        if(tagname==null || tagname=="")
+            return new ArrayList<>();
+        return tagService.getRecommandTagsName(tagname);
+    }
 }

@@ -68,10 +68,13 @@ public class myPreferController {
         userid=getuserid(session);
         return preferRepository.count(userid);
     }
+    @Autowired
+    PreferService preferService;
+
     @GetMapping("delete")
     String delete(@RequestParam(value = "blogid",required = true) Long blogid,HttpSession session){
         userid=getuserid(session);
-        preferRepository.delete(blogid,userid);
+        preferService.unLike(blogid,userid);
         return "ok";
     }
 }
