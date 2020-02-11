@@ -7,6 +7,7 @@ import com.liaocc.test.po.User;
 import com.liaocc.test.redis.RedisUtils;
 import com.liaocc.test.table.BlogAndTag;
 import com.liaocc.test.table.BlogTitleAndHtml;
+import com.liaocc.test.table.BlogTitleAndSummary;
 import com.liaocc.test.table.TagidAndNum;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.hibernate.sql.Select;
@@ -276,6 +277,49 @@ public class BlogServiceImpl implements BlogService {
 //        }
         RecommandBlogSize.put(userid,ans.size());
         return ans;
+    }
+
+    @Autowired
+    PreferService preferService;
+    @Autowired
+    FavouriteService favouriteService;
+    @Autowired
+    UserService userService;
+
+    @Override
+    public List<BlogTitleAndSummary> toTitleAndSummary(List<Blog> blogs,Long userid) {
+        List<BlogTitleAndSummary> ans=new ArrayList<>();
+        List<BigInteger> prefer=preferService.getPrefer(userid);
+        List<BigInteger> favourite=favouriteService.getFavourite(userid);
+        int ii=0;
+        for(Blog b:blogs) {
+            b.setSummary(getSummary(b.getId()));
+            BlogTitleAndSummary temp = new BlogTitleAndSummary();
+            temp.setId(b.getId());
+            temp.setTitle(b.getTitle());
+            temp.setSummary(b.getSummary());
+            temp.setLike(false);
+            temp.setFavourite(false);
+            temp.setTags(tagService.gettags(b.getId()));
+            for(int i=0;i<prefer.size();i++){
+                if(prefer.get(i).longValue()==b.getId().longValue()){
+                    temp.setLike(true);
+                }
+            }
+            for(int i=0;i<favourite.size();i++){
+                if(favourite.get(i).longValue()==b.getId().longValue()){
+                    temp.setFavourite(true);
+                }
+            }
+            temp.setWriter(getblog(b.getId()).getUser().getUsername());
+            ans.add(temp);
+        }
+        return ans;
+    }
+
+    @Override
+    public List<Blog> search(String queryString) {
+        return blogRepository.search(queryString);
     }
 
 }

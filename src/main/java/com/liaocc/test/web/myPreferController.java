@@ -45,22 +45,7 @@ public class myPreferController {
         userid=getuserid(session);
         if(userid==null) return null;
         List<Blog> blogs=blogRepository.getPreferBlog(userid,(val-1)*8,8);
-        List<BigInteger> favourite=favouriteService.getFavourite(userid);
-        List<BlogTitleAndSummary> ans=new ArrayList<>();
-        for(Blog b:blogs){
-            BlogTitleAndSummary temp=new BlogTitleAndSummary();
-            b.setSummary(blogService.toSummary(b));
-            temp.setId(b.getId());
-            temp.setSummary(b.getSummary());
-            temp.setTitle(b.getTitle());
-            temp.setTags(tagService.gettags(b.getId()));
-            for(BigInteger i:favourite){
-                if(b.getId().longValue()==i.longValue())
-                    temp.setFavourite(true);
-            }
-            temp.setWriter(blogService.getblog(b.getId()).getUser().getUsername());
-            ans.add(temp);
-        }
+        List<BlogTitleAndSummary> ans=blogService.toTitleAndSummary(blogs,userid);
         return ans;
     }
     @GetMapping("countAll")

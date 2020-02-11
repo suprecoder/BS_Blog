@@ -3,6 +3,7 @@ package com.liaocc.test.service;
 import com.liaocc.test.po.Blog;
 import com.liaocc.test.po.User;
 import com.liaocc.test.table.BlogTitleAndHtml;
+import com.liaocc.test.table.BlogTitleAndSummary;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface BlogService {
     boolean delete(Long blogid,Long userid);
     public List<Blog> getRecommandBlogInpage(Long userid,int page);
     List<Blog> getRecommandBlog(Long userid);
+    List<BlogTitleAndSummary> toTitleAndSummary(List<Blog>blogs,Long userid);
+    List<Blog> search(String queryString);
 }

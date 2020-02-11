@@ -1,5 +1,6 @@
 package com.liaocc.test.web;
 
+import com.alibaba.fastjson.JSON;
 import com.liaocc.test.dao.BlogRepository;
 import com.liaocc.test.po.Blog;
 import com.liaocc.test.po.Favourite;
@@ -125,41 +126,38 @@ public class indexController {
         if(user!=null)
             userid=user.getId();
         else return null;
-        List<Blog> blogs=blogService.listbloginpage(val);
-
-        ///////
-        blogs=blogService.getRecommandBlogInpage(user.getId(),val);
-
-        List<BlogTitleAndSummary> ans=new ArrayList<>();
-        List<BigInteger> prefer=preferService.getPrefer(userid);
-        List<BigInteger> favourite=favouriteService.getFavourite(userid);
-        System.out.println(favourite);
-
-        int ii=0;
-        for(Blog b:blogs){
-            if(b.getPublictype()==2)
-                continue;
-            b.setSummary(blogService.getSummary(b.getId()));
-            BlogTitleAndSummary temp=new BlogTitleAndSummary();
-            temp.setId(b.getId());
-            temp.setTitle(b.getTitle());
-            temp.setSummary(b.getSummary());
-            temp.setLike(false);
-            temp.setFavourite(false);
-            temp.setTags(tagService.gettags(b.getId()));
-            for(int i=0;i<prefer.size();i++){
-                if(prefer.get(i).longValue()==b.getId().longValue()){
-                    temp.setLike(true);
-                }
-            }
-            for(int i=0;i<favourite.size();i++){
-                if(favourite.get(i).longValue()==b.getId().longValue()){
-                    temp.setFavourite(true);
-                }
-            }
-            temp.setWriter(blogService.getblog(b.getId()).getUser().getUsername());
-            ans.add(temp);
-        }
+        List<Blog> blogs=blogService.getRecommandBlogInpage(user.getId(),val);
+        List<BlogTitleAndSummary> ans=blogService.toTitleAndSummary(blogs,userid);
+//        List<BlogTitleAndSummary> ans=new ArrayList<>();
+//        List<BigInteger> prefer=preferService.getPrefer(userid);
+//        List<BigInteger> favourite=favouriteService.getFavourite(userid);
+//        System.out.println(favourite);
+//
+//        int ii=0;
+//        for(Blog b:blogs){
+//            if(b.getPublictype()==2)
+//                continue;
+//            b.setSummary(blogService.getSummary(b.getId()));
+//            BlogTitleAndSummary temp=new BlogTitleAndSummary();
+//            temp.setId(b.getId());
+//            temp.setTitle(b.getTitle());
+//            temp.setSummary(b.getSummary());
+//            temp.setLike(false);
+//            temp.setFavourite(false);
+//            temp.setTags(tagService.gettags(b.getId()));
+//            for(int i=0;i<prefer.size();i++){
+//                if(prefer.get(i).longValue()==b.getId().longValue()){
+//                    temp.setLike(true);
+//                }
+//            }
+//            for(int i=0;i<favourite.size();i++){
+//                if(favourite.get(i).longValue()==b.getId().longValue()){
+//                    temp.setFavourite(true);
+//                }
+//            }
+//            temp.setWriter(blogService.getblog(b.getId()).getUser().getUsername());
+//            ans.add(temp);
+//        }
         return ans;
         //return blogService.listblog();
     }
@@ -209,5 +207,16 @@ public class indexController {
     @GetMapping("countAll")
     public Long countAll(HttpSession session){
         return blogService.countAllRecommand(getuserid(session));
+    }
+
+    @GetMapping("search")
+    public String search(@RequestParam(value = "querystring",required = true)String queryString,
+                         @RequestParam(value = "val",required = true)int val,HttpSession session){
+        JSONObject jsonObject=new JSONObject();
+        List<Blog> blogs=blogService.search(queryString);
+        List<BlogTitleAndSummary> ans=blogService.toTitleAndSummary(blogs.subList((val-1)*8,Math.min(blogs.size(),val*8)),getuserid(session));
+        jsonObject.put("blogs",ans);
+        jsonObject.put("num",blogs.size());
+        return jsonObject.toString();
     }
 }
