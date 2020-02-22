@@ -179,11 +179,17 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Blog> getRecommandBlogInpage(Long userid,int page) {
-        List<Blog> blogs= (List<Blog>) redisUtils.get("recommandblog"+userid.toString());
-        if(blogs==null)
-            blogs=getRecommandBlog(userid);
-        redisUtils.setexpire("recommandblog"+userid.toString(),20l,TimeUnit.MINUTES);
-        return blogs.subList((page-1)*8,Math.min(((page-1)*8+8),blogs.size()));
+        List<Long> blogs= (List<Long>) redisUtils.get("recommandblog"+userid.toString());
+        if(blogs==null) {
+            blogs = getRecommandBlog(userid);
+            redisUtils.set("recommandblog" + userid.toString(), blogs, 20l, TimeUnit.MINUTES);
+        }
+        List<Blog> ans=new ArrayList<>();
+        for(int i=(page-1)*8;i<Math.min(((page-1)*8+8),blogs.size());i++){
+            ans.add(getblog(blogs.get(i)));
+        }
+
+        return ans;
 
     }
 
@@ -192,7 +198,7 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     User_TagNumRepository user_tagNumRepository;
     @Override
-    public List<Blog> getRecommandBlog(Long userid) {
+    public List<Long> getRecommandBlog(Long userid) {
         List<User> users=userRepository.getAllUsers();
         User me=userRepository.getUserByid(userid);
         Map<Long,Integer> mytaginfo=ListToMap(user_tagNumRepository.getTagidAndNum(me.getId()));
@@ -223,58 +229,46 @@ public class BlogServiceImpl implements BlogService {
                     CMP[index++]=new cmp(user,sum3/(Math.sqrt(sum1)*Math.sqrt(sum2)));
             }
         }
+        System.out.println(CMP.length);
         Arrays.sort(CMP,0,CMP.length-1);
+
         Long count=blogRepository.countAll();
         Set<Long> hashset=new HashSet<>();
-        List<Blog> ans=new ArrayList<>();
+        List<Long> ans=new ArrayList<>();
         for(int i=0;i<CMP.length-1;i++){
             List<Blog> blogs=blogRepository.getFavouriteBlog(CMP[i].user.getId(),0,count.intValue());
+            List<Blog> finalBlogs1 = blogs;
             for(Blog blog:blogs){
-                redisUtils.set("blog"+blog.getId().toString(),blog,2l,TimeUnit.HOURS);
+                //redisUtils.set("blog"+blog.getId().toString(),blog,2l,TimeUnit.HOURS);
                 if(!hashset.contains(blog.getId()))
-                    ans.add(blog);
+                    ans.add(blog.getId());
                 hashset.add(blog.getId());
             }
             blogs=blogRepository.getPreferBlog(CMP[i].user.getId(),0,count.intValue());
+            List<Blog> finalBlogs = blogs;
             for(Blog blog:blogs){
-                redisUtils.set("blog"+blog.getId().toString(),blog,2l,TimeUnit.HOURS);
+                //redisUtils.set("blog"+blog.getId().toString(),blog,2l,TimeUnit.HOURS);
                 if(!hashset.contains(blog.getId()))
-                    ans.add(blog);
+                    ans.add(blog.getId());
                 hashset.add(blog.getId());
             }
-
+            if(ans.size()>=100){
+                break;
+            }
         }
         for(int i=0;i<CMP.length-1;i++) {
+            if(ans.size()>=100)break;
             List<Blog> blogs = blogRepository.listblogbyusername(CMP[i].user.getUsername());
             for (Blog blog : blogs) {
-                redisUtils.set("blog" + blog.getId().toString(), blog, 2l, TimeUnit.HOURS);
+                //redisUtils.set("blog" + blog.getId().toString(), blog, 2l, TimeUnit.HOURS);
                 if (!hashset.contains(blog.getId()))
-                    ans.add(blog);
+                    ans.add(blog.getId());
                 hashset.add(blog.getId());
             }
+            if(ans.size()>=100){
+                break;
+            }
         }
-        Random rn=new Random();
-        for(int i=0;i<ans.size()/8;i++){
-            int pa=Math.abs(rn.nextInt())%ans.size();
-            int pb=Math.abs(rn.nextInt())%ans.size();
-            Blog a=ans.get(pa);
-            ans.set(pa,ans.get(pb));
-            ans.set(pb,a);
-        }
-
-        //Object[] hash=hashset.toArray();
-
-//        for(int i=0;i<tags.size();i++){
-//            Long blogid=tags.get(i).getBlogidAndTagidKey().getBlog_id();
-//            List<String> temp=tagService.gettags(blogid);
-//
-//            if(!getblog(blogid).getUser().getId().equals(userid)){
-//
-//            }
-//        }
-//        for(int i=0;i<hash.length;i++){
-//            ans.add(getblog((Long)hash[i]));
-//        }
         RecommandBlogSize.put(userid,ans.size());
         return ans;
     }
