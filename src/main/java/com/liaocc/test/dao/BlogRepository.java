@@ -54,6 +54,6 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Query(value = "delete from blog where id=?1 and user_id=?2",nativeQuery = true)
     int delete(Long blogid,Long userid);
 
-    @Query(value = "select *from blog where content_md like %?1% OR title like %?1% OR summary like %?1% or id in (SELECT blog_id from cnt_blog_tag where tag_id in (SELECT id from tag where name like %?1%))",nativeQuery = true)
+    @Query(value = "select *from blog where content_md like %?1% OR title like %?1% OR summary like %?1% or id in (SELECT blog_id from cnt_blog_tag where tag_id in (SELECT id from tag where name like %?1%)) or user_id in (select id from user where username like %?1%)",nativeQuery = true)
     List<Blog> search(String queryString);
 }

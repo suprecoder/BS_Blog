@@ -59,6 +59,14 @@ public class personalController {
             FileCopyUtils.copy(avatarService.getAvatar(userid), response.getOutputStream());
         }catch (Exception e){e.printStackTrace();}
     }
+    //根据userid查询作者头像
+    @RequestMapping("getavatarbyuserid/{id}")
+    void getimgbyuserid(@PathVariable("id") Long userid,HttpServletResponse response){
+        try{
+
+            FileCopyUtils.copy(avatarService.getAvatarbyUser(userid), response.getOutputStream());
+        }catch (Exception e){e.printStackTrace();}
+    }
     //根据博客id查询作者头像
     @RequestMapping("getavatar/{id}")
     void getimg(@PathVariable("id") Long blogid,HttpServletResponse response){

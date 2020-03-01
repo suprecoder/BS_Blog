@@ -47,6 +47,12 @@ public class AvatarServiceImpl implements AvatarService {
             else avatarRepository.updateavatar(userid,bytes);
         }catch (Exception e){e.printStackTrace();}
     }
+
+    @Override
+    public InputStream getAvatarbyUser(Long userid) {
+        return getAvatar(userid);
+    }
+
     @Override
     public InputStream getAvatarbyBlog(Long blogid){
         Blog blog=blogRepository.getblog(blogid);

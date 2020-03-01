@@ -8,4 +8,5 @@ public interface AvatarService {
     InputStream getAvatar(Long userid);
     public InputStream getAvatarbyBlog(Long blogid);
     void saveAvatar(Long userid, MultipartFile file);
+    public InputStream getAvatarbyUser(Long userid);
 }

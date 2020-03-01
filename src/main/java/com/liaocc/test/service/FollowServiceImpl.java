@@ -45,4 +45,10 @@ public class FollowServiceImpl implements FollowService {
         return followRepository.isexist(user_id,follow_id)>0;
     }
 
+    @Override
+    public List<BigInteger> getfollowid(Long user_id) {
+            return followRepository.getFollowid(user_id);
+    }
+
+
 }

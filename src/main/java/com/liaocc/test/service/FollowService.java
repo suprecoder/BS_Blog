@@ -12,4 +12,5 @@ public interface FollowService {
     public int count(Long userid);
     public int countmygetfollow(Long userid);
     public boolean isfollow(Long user_id,Long follow_id);
+    public List<BigInteger> getfollowid(Long user_id);
 }

@@ -6,6 +6,7 @@ import com.liaocc.test.po.Blog;
 import com.liaocc.test.po.User;
 import com.liaocc.test.service.*;
 import com.liaocc.test.table.BlogTitleAndSummary;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public class followBlogController {
         return user.getId();
     }
     @GetMapping("getmyfollow")
-    List<BlogTitleAndSummary> getmyfavourite(@RequestParam(value = "val",required = true) int val, HttpSession session){
+    String getmyfavourite(@RequestParam(value = "val",required = true) int val, HttpSession session){
         String username= (String) session.getAttribute("username");
         User user=userService.getUserbyname(username);
         if(user!=null)
@@ -50,7 +51,16 @@ public class followBlogController {
         System.out.println(username);
         List<Blog> blogs=followService.getfollow(userid,val);
         List<BlogTitleAndSummary> ans=blogService.toTitleAndSummary(blogs,userid);
-        return ans;
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("bloglist",ans);
+        List<BigInteger> follow_id=followService.getfollowid(user.getId());
+        jsonObject.put("follow_id",follow_id);
+        List<String> names=new ArrayList<>();
+        for(BigInteger id:follow_id){
+            names.add(userService.getUserByid(id.longValue()).getUsername());
+        }
+        jsonObject.put("follow_name",names);
+        return jsonObject.toString();
     }
     @GetMapping("countAll")
     public int countAll(HttpSession session){
