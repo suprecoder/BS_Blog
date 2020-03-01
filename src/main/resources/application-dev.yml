@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bs_blog?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/bs_blog?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
   jpa:
@@ -22,7 +22,7 @@ spring:
 
   redis2:
 
-    host: 127.0.0.1
+    host: 101.37.84.109
     port: 6379
     password:
     pool:

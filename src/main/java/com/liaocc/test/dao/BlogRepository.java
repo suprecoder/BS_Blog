@@ -19,7 +19,7 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Override
     Blog saveAndFlush(Blog b);
 
-    @Query(value = "(select * from blog where user_id=(select id from user where username=?1) order by blog.id) limit ?2,8",nativeQuery = true)
+    @Query(value = "select * from blog where user_id=(select id from user where username=?1) order by blog.id limit ?2,8",nativeQuery = true)
     List<Blog> listblogbyusername(String username,int item);
 
     @Query(value = "(select * from blog where user_id=(select id from user where username=?1) order by blog.id)",nativeQuery = true)

@@ -12,8 +12,7 @@ import com.liaocc.test.table.BlogTitleAndSummary;
 import com.liaocc.test.utils.CoookieUtils;
 import com.liaocc.test.utils.Msg;
 import com.liaocc.test.utils.UpPhotoNameUtils;
-import com.sun.crypto.provider.BlowfishKeyGenerator;
-import com.sun.deploy.net.HttpResponse;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

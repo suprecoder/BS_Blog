@@ -7,14 +7,14 @@ import com.liaocc.test.po.Avatar;
 import com.liaocc.test.po.User;
 import com.liaocc.test.service.*;
 import com.liaocc.test.table.PersonalMsg;
-import com.sun.xml.internal.ws.api.pipe.ContentType;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Encoder;
+
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
