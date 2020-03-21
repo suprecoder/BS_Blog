@@ -40,13 +40,13 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
     @Query(value = "select * from blog where id=?1",nativeQuery = true)
     Blog getblog(Long blog_id);
 
-    @Query(value = "select * from blog where id in (SELECT blog_id from favourite where user_id=?1) order by id limit ?2,?3",nativeQuery = true)
+    @Query(value = "select * from blog where id in (SELECT blog_id from favourite where user_id=?1) and publictype=1 order by id limit ?2,?3",nativeQuery = true)
     List<Blog> getFavouriteBlog(Long userid,int a,int b);
 
-    @Query(value = "select * from blog where id in (SELECT blog_id from prefer where user_id=?1) order by id limit ?2,?3",nativeQuery = true)
+    @Query(value = "select * from blog where id in (SELECT blog_id from prefer where user_id=?1) and publictype=1 order by id limit ?2,?3",nativeQuery = true)
     List<Blog> getPreferBlog(Long userid,int a,int b);
 
-    @Query(value = "select * from blog where user_id in (SELECT follow_id from follow where user_id=?1) order by id limit ?2,?3",nativeQuery = true)
+    @Query(value = "select * from blog where user_id in (SELECT follow_id from follow where user_id=?1) and publictype=1 order by id limit ?2,?3",nativeQuery = true)
     List<Blog> getFollowBlog(Long userid,int a,int b);
 
     @Modifying

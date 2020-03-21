@@ -260,6 +260,7 @@ public class BlogServiceImpl implements BlogService {
             if(ans.size()>=100)break;
             List<Blog> blogs = blogRepository.listblogbyusername(CMP[i].user.getUsername());
             for (Blog blog : blogs) {
+		if(blog.getPublictype().equals(0))continue;
                 //redisUtils.set("blog" + blog.getId().toString(), blog, 2l, TimeUnit.HOURS);
                 if (!hashset.contains(blog.getId()))
                     ans.add(blog.getId());

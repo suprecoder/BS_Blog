@@ -15,7 +15,7 @@ public interface FollowRepository extends JpaRepository<Follow, UseridAndFollowi
     List<BigInteger> getFollow(Long userid);
 
     //我关注的人的博客数量
-    @Query(value = "select count(*) from blog where user_id in (SELECT follow_id from follow where user_id=?1)",nativeQuery = true)
+    @Query(value = "select count(*) from blog where user_id in (SELECT follow_id from follow where user_id=?1) and publictype=1",nativeQuery = true)
     int count(Long userid);
 
     //我收获的关注
