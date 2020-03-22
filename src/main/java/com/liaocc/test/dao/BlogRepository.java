@@ -56,4 +56,7 @@ public interface BlogRepository extends JpaRepository<Blog,Long> {
 
     @Query(value = "select *from blog where content_md like %?1% OR title like %?1% OR summary like %?1% or id in (SELECT blog_id from cnt_blog_tag where tag_id in (SELECT id from tag where name like %?1%)) or user_id in (select id from user where username like %?1%)",nativeQuery = true)
     List<Blog> search(String queryString);
+
+    @Query(value = "select *from blog where id in (select blog_id from cnt_blog_tag where tag_id in (SELECT id from tag where name=?1)) and publictype=1",nativeQuery = true)
+    List<Blog> getBlogByTag(String tag);
 }

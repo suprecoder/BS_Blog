@@ -218,4 +218,11 @@ public class indexController {
         jsonObject.put("num",blogs.size());
         return jsonObject.toString();
     }
+
+    @GetMapping("gethottags")
+    public List<String> getHotTags(){
+        return tagService.getHotTags();
+    }
+
+
 }

@@ -26,4 +26,5 @@ public interface BlogService {
     List<Long> getRecommandBlog(Long userid);
     List<BlogTitleAndSummary> toTitleAndSummary(List<Blog>blogs,Long userid);
     List<Blog> search(String queryString);
+    public List<BlogTitleAndSummary> getBlogByTag(String tag,Long userid);
 }

@@ -1,8 +1,10 @@
 package com.liaocc.test.service;
 
+import com.alibaba.fastjson.JSON;
 import com.liaocc.test.dao.TagRepository;
 import com.liaocc.test.redis.RedisUtils;
 import com.liaocc.test.table.BlogAndTag;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 @Service
 
 public class TagServiceImpl implements TagService {
@@ -105,4 +109,23 @@ public class TagServiceImpl implements TagService {
     public List<Long> User_Tag(Long userid){
         return tagRepository.getUser_Tag(userid);
     }
+
+    @Override
+    public List<String> getHotTags() {
+        List<String> hotTag=tagRepository.getHotTags();
+        redisUtils.set("hotTag",hotTag,2l, TimeUnit.HOURS);
+        return hotTag;
+    }
+
+    @Override
+    public JSONObject getTagsByFirstLitter() {
+        JSONObject jsonObject=new JSONObject();
+        for(int i=0;i<26;i++){
+            List<String> ans=tagRepository.getTagByFirstLitter((char)((int)'a'+i));
+            jsonObject.put(""+(char)((int)'a'+i),ans);
+        }
+        return  jsonObject;
+    }
+
+
 }

@@ -317,4 +317,12 @@ public class BlogServiceImpl implements BlogService {
         return blogRepository.search(queryString);
     }
 
+    @Override
+    public List<BlogTitleAndSummary> getBlogByTag(String tag,Long userid) {
+
+        List<Blog> blogs=blogRepository.getBlogByTag(tag);
+        List<BlogTitleAndSummary> ans = toTitleAndSummary(blogs,userid);
+        return ans;
+    }
+
 }
